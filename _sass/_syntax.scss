@@ -1,0 +1,148 @@
+/* ==========================================================================
+   Syntax highlighting - Dracula Theme (Adjusted Background)
+   ========================================================================== */
+
+div.highlighter-rouge, figure.highlight {
+  position: relative;
+  margin-bottom: 1em;
+  padding: 1em;
+  /* Adjust these variables if you have them defined in your site's CSS */
+  border: 1px solid var(--global-border-color, #6272a4); /* Dracula comment/selection */
+  border-radius: $border-radius; /* Keep if defined, otherwise replace with a pixel value like 5px */
+
+  /* --- MODIFICATION HERE --- */
+  background-color: #252525; /* Set to pure black */
+  /* If you are using --global-code-background-color, ensure it's defined elsewhere as #000000 */
+  /* Example: --global-code-background-color: #000000; in your :root or body styles */
+  /* ----------------------- */
+
+  box-shadow: $box-shadow; /* Keep if defined, otherwise remove or replace with a custom shadow */
+  font-size: $type-size-4; /* Keep if defined, otherwise replace with a pixel/em value */
+
+  &:before { /* This is for an icon/label, common in some themes */
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5em;
+    background-color: #282a36; /* Dracula current line/selection background */
+    content: "\f121"; /* Font Awesome code icon */
+    font-family: "Font Awesome 6 Free" !important; /* Ensure Font Awesome is loaded */
+    font-size: $type-size-6; /* Keep if defined, otherwise replace with a pixel/em value */
+    line-height: 1;
+    text-transform: none;
+    speak: none;
+  }
+
+  .highlight {
+    margin: 0;
+    font-family: $monospace; /* Keep if defined, otherwise specify a monospace font like 'Fira Code', 'Consolas' */
+    font-size: $type-size-6; /* Keep if defined, otherwise replace with a pixel/em value */
+    line-height: 1.8;
+  }
+}
+
+/* ... (rest of your CSS with Dracula colors for text remains the same) ... */
+
+/* Dracula Theme Colors (reference)
+   --------------------
+   Background: #282a36  <- This was the original Dracula background
+   Current Line / Selection: #44475a
+   Foreground: #f8f8f2
+   Comment: #6272a4
+   Cyan: #8be9fd
+   Green: #50fa7b
+   Orange: #ffb86c
+   Pink: #ff79c6
+   Purple: #bd93f9
+   Red: #ff5555
+   Yellow: #f1fa8c
+*/
+
+.highlight .c { color: #6272a4; } /* Comment - Dracula: Comment */
+.highlight .err { color: #ff5555; } /* Error - Dracula: Red */
+.highlight .g { color: #f8f8f2; } /* Generic - Dracula: Foreground */
+.highlight .k { color: #ff79c6; } /* Keyword - Dracula: Pink */
+.highlight .l { color: #f1fa8c; } /* Literal (e.g., boolean, null) - Dracula: Yellow */
+.highlight .n { color: #f8f8f2; } /* Name (general identifier) - Dracula: Foreground */
+.highlight .o { color: #ff79c6; } /* Operator - Dracula: Pink */
+.highlight .x { color: #ff5555; } /* Other (e.g., invalid text) - Dracula: Red */
+.highlight .p { color: #f8f8f2; } /* Punctuation - Dracula: Foreground */
+
+/* Specific Comment types */
+.highlight .cm { color: #6272a4; } /* Comment.Multiline */
+.highlight .cp { color: #ff79c6; } /* Comment.Preproc - Dracula: Pink */
+.highlight .c1 { color: #6272a4; } /* Comment.Single */
+.highlight .cs { color: #ff79c6; } /* Comment.Special - Dracula: Pink */
+
+/* Generic types */
+.highlight .gd { color: #ff5555; } /* Generic.Deleted - Dracula: Red */
+.highlight .ge { color: #f8f8f2; font-style: italic; } /* Generic.Emph - Dracula: Foreground, italic */
+.highlight .gr { color: #ff5555; } /* Generic.Error - Dracula: Red */
+.highlight .gh { color: #ffb86c; } /* Generic.Heading - Dracula: Orange */
+.highlight .gi { color: #50fa7b; } /* Generic.Inserted - Dracula: Green */
+.highlight .go { color: #f8f8f2; } /* Generic.Output - Dracula: Foreground */
+.highlight .gp { color: #f8f8f2; } /* Generic.Prompt - Dracula: Foreground */
+.highlight .gs { color: #f8f8f2; font-weight: bold; } /* Generic.Strong - Dracula: Foreground, bold */
+.highlight .gu { color: #ffb86c; } /* Generic.Subheading - Dracula: Orange */
+.highlight .gt { color: #ff5555; } /* Generic.Traceback - Dracula: Red */
+
+/* Specific Keyword types */
+.highlight .kc { color: #ff79c6; } /* Keyword.Constant - Dracula: Pink */
+.highlight .kd { color: #8be9fd; } /* Keyword.Declaration - Dracula: Cyan */
+.highlight .kn { color: #ff79c6; } /* Keyword.Namespace - Dracula: Pink */
+.highlight .kp { color: #ff79c6; } /* Keyword.Pseudo - Dracula: Pink */
+.highlight .kr { color: #ff79c6; } /* Keyword.Reserved - Dracula: Pink */
+.highlight .kt { color: #8be9fd; } /* Keyword.Type - Dracula: Cyan */
+
+/* Literal types */
+.highlight .ld { color: #f1fa8c; } /* Literal.Date - Dracula: Yellow */
+.highlight .m { color: #bd93f9; } /* Literal.Number - Dracula: Purple */
+.highlight .s { color: #f1fa8c; } /* Literal.String - Dracula: Yellow */
+
+/* Name types */
+.highlight .na { color: #50fa7b; } /* Name.Attribute - Dracula: Green */
+.highlight .nb { color: #8be9fd; } /* Name.Builtin - Dracula: Cyan */
+.highlight .nc { color: #50fa7b; } /* Name.Class - Dracula: Green */
+.highlight .no { color: #ffb86c; } /* Name.Constant - Dracula: Orange */
+.highlight .nd { color: #50fa7b; } /* Name.Decorator - Dracula: Green */
+.highlight .ni { color: #ffb86c; } /* Name.Entity - Dracula: Orange */
+.highlight .ne { color: #ff5555; } /* Name.Exception - Dracula: Red */
+.highlight .nf { color: #50fa7b; } /* Name.Function - Dracula: Green */
+.highlight .nl { color: #8be9fd; } /* Name.Label - Dracula: Cyan */
+.highlight .nn { color: #f8f8f2; } /* Name.Namespace - Dracula: Foreground */
+.highlight .nx { color: #f8f8f2; } /* Name.Other - Dracula: Foreground */
+.highlight .py { color: #f8f8f2; } /* Name.Property - Dracula: Foreground */
+.highlight .nt { color: #ff79c6; } /* Name.Tag - Dracula: Pink */
+.highlight .nv { color: #8be9fd; } /* Name.Variable - Dracula: Cyan */
+.highlight .ow { color: #ff79c6; } /* Operator.Word - Dracula: Pink */
+
+/* Text types */
+.highlight .w { color: #f8f8f2; } /* Text.Whitespace - Dracula: Foreground */
+
+/* More specific Literals */
+.highlight .mf { color: #bd93f9; } /* Literal.Number.Float - Dracula: Purple */
+.highlight .mh { color: #bd93f9; } /* Literal.Number.Hex - Dracula: Purple */
+.highlight .mi { color: #bd93f9; } /* Literal.Number.Integer - Dracula: Purple */
+.highlight .mo { color: #bd93f9; } /* Literal.Number.Oct - Dracula: Purple */
+
+/* More specific Strings */
+.highlight .sb { color: #f1fa8c; } /* Literal.String.Backtick - Dracula: Yellow */
+.highlight .sc { color: #f1fa8c; } /* Literal.String.Char - Dracula: Yellow */
+.highlight .sd { color: #f1fa8c; } /* Literal.String.Doc - Dracula: Yellow */
+.highlight .s2 { color: #f1fa8c; } /* Literal.String.Double - Dracula: Yellow */
+.highlight .se { color: #ff79c6; } /* Literal.String.Escape - Dracula: Pink */
+.highlight .sh { color: #f1fa8c; } /* Literal.String.Heredoc - Dracula: Yellow */
+.highlight .si { color: #f1fa8c; } /* Literal.String.Interpol - Dracula: Yellow */
+.highlight .sx { color: #f1fa8c; } /* Literal.String.Other - Dracula: Yellow */
+.highlight .sr { color: #ff5555; } /* Literal.String.Regex - Dracula: Red */
+.highlight .s1 { color: #f1fa8c; } /* Literal.String.Single - Dracula: Yellow */
+.highlight .ss { color: #f1fa8c; } /* Literal.String.Symbol - Dracula: Yellow */
+
+/* More specific Names */
+.highlight .bp { color: #8be9fd; } /* Name.Builtin.Pseudo - Dracula: Cyan */
+.highlight .vc { color: #8be9fd; } /* Name.Variable.Class - Dracula: Cyan */
+.highlight .vg { color: #8be9fd; } /* Name.Variable.Global - Dracula: Cyan */
+.highlight .vi { color: #8be9fd; } /* Name.Variable.Instance - Dracula: Cyan */
+
+/* More specific Literals */
+.highlight .il { color: #bd93f9; } /* Literal.Number.Integer.Long - Dracula: Purple */
