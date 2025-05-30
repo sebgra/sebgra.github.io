@@ -1,0 +1,24 @@
+current directory: /home/sebastien/Bureau/sebgra.github.io/.bundle/ruby/3.4.0/gems/json-2.10.2/ext/json/ext/parser
+/usr/bin/ruby extconf.rb
+checking for rb_enc_interned_str() in ruby.h... yes
+checking for rb_hash_new_capa() in ruby.h... yes
+checking for rb_hash_bulk_insert() in ruby.h... yes
+checking for rb_category_warn() in ruby.h... yes
+checking for strnlen() in string.h... yes
+checking for whether -std=c99 is accepted as CFLAGS... yes
+creating Makefile
+
+current directory: /home/sebastien/Bureau/sebgra.github.io/.bundle/ruby/3.4.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20250528-84777-qn44hc sitelibdir\=./.gem.20250528-84777-qn44hc clean
+
+current directory: /home/sebastien/Bureau/sebgra.github.io/.bundle/ruby/3.4.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20250528-84777-qn44hc sitelibdir\=./.gem.20250528-84777-qn44hc
+compiling parser.c
+linking shared-object json/ext/parser.so
+
+current directory: /home/sebastien/Bureau/sebgra.github.io/.bundle/ruby/3.4.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20250528-84777-qn44hc sitelibdir\=./.gem.20250528-84777-qn44hc install
+/usr/bin/install -c -m 0755 parser.so ./.gem.20250528-84777-qn44hc/json/ext
+
+current directory: /home/sebastien/Bureau/sebgra.github.io/.bundle/ruby/3.4.0/gems/json-2.10.2/ext/json/ext/parser
+make DESTDIR\= sitearchdir\=./.gem.20250528-84777-qn44hc sitelibdir\=./.gem.20250528-84777-qn44hc clean

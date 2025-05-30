@@ -1,6 +1,702 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-21T18:23:54+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: A First Step</title><link href="http://localhost:4000/posts/2023/06/blog-post-1/" rel="alternate" type="text/html" title="Bioinformatics and AI: A First Step" /><published>2023-06-14T00:00:00+00:00</published><updated>2023-06-14T00:00:00+00:00</updated><id>http://localhost:4000/posts/2023/06/blog-post-1</id><content type="html" xml:base="http://localhost:4000/posts/2023/06/blog-post-1/"><![CDATA[<h1 id="bioinformatics-and-ai-a-first-step">Bioinformatics and AI: A First Step</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-30T10:03:10+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: CNNs for bioinformatics</title><link href="http://localhost:4000/posts/2024/02/blog-post-2/" rel="alternate" type="text/html" title="Bioinformatics and AI: CNNs for bioinformatics" /><published>2024-02-16T00:00:00+00:00</published><updated>2024-02-16T00:00:00+00:00</updated><id>http://localhost:4000/posts/2024/02/blog-post-2</id><content type="html" xml:base="http://localhost:4000/posts/2024/02/blog-post-2/"><![CDATA[<!-- TODO: Set google collab notebook -->
 
-<p>The correspondinw notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/github/bioinfo-fr/data_ia/blob/main/DNA_CNN_promoters.ipynb">
+<p>The corresponding notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/github/bioinfo-fr/data_ia/blob/main/DNA_CNN_promoters.ipynb">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" />
+</a></p>
+
+<!-- <div style="text-align: center;">
+
+ ![DNA Illustration](/images/post_images/article_1/dna_illustration.png)
+</div> -->
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/dna_ia.jpg" alt="DNA x AI" />
+  <p>DNA x AI | Pixabay </p>
+</div>
+
+<h2 id="bioinformatics-and-ai-lets-explore-cnns">Bioinformatics and A.I: Let’s explore CNNs</h2>
+
+<p>Let’s dive into <strong>DNA sequences</strong> today! We’ll be using a dataset you can download from Kaggle: <a href="https://www.kaggle.com/datasets/nageshsingh/dna-sequence-dataset">DNA Sequence Dataset</a>. All the necessary files for this article are also available here.</p>
+
+<p>In this dataset, you’ll find DNA sequences from three species: <strong>human</strong>, <strong>dog</strong>, and <strong>chimpanzee</strong>. Each sequence belongs to one of seven distinct gene families:</p>
+
+<ul>
+  <li><strong>0: G protein-coupled receptors</strong></li>
+  <li><strong>1: Tyrosine kinase transmembrane receptors</strong></li>
+  <li><strong>2: Tyrosine phosphatase</strong></li>
+  <li><strong>3: Asparagine synthetase</strong></li>
+  <li><strong>4: Mitochondrial DNA</strong></li>
+  <li><strong>5: Vanilloid receptor</strong></li>
+  <li><strong>6: Homeodomain TF1</strong></li>
+</ul>
+
+<p>Our goal here is to tackle a <strong>multi-class classification</strong> problem, which differs from the binary classification we explored previously in this article: <a href="/posts/2023/06/blog-post-1/">Bioinformatics and AI: A First Step</a>.</p>
+
+<p>We’ll need to <strong>encode</strong> these sequences so our neural network can analyze them. Today, I propose we use <strong>chaos theory</strong> (or chaos games), which we’ll delve into a bit later in this article. For now, let’s examine our data.</p>
+
+<hr />
+
+<h2 id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+
+<p>We’ll focus on the <strong>human sequences</strong>, of which there are 4020. We’ll process these using a <strong>5-mer representation (k=5)</strong>, resulting in <strong>32x32 pixel matrices</strong>.</p>
+
+\[representation = \sqrt{4^{k}}\]
+
+<p>As with any machine learning approach, we’ll divide our dataset into three sets: <strong>training</strong>, <strong>test</strong>, and <strong>validation</strong>, following an 80%, 10%, and 10% split respectively. (For more information on data splitting, see here: <a href="https://fr.wikipedia.org/wiki/Jeux_d%27entrainement,_de_validation_et_de_test">Training, validation, and test sets</a>). After resizing, we’ll obtain tensors of size <strong>3216x32x32x1 for the training set</strong> and <strong>402x32x32x1 for both the test and validation sets</strong>. This split will be stratified to maintain the proportions of the different classes.</p>
+
+<p>Looking at the class distribution within the overall dataset, we observe an overrepresentation of sequences from <strong>class 0</strong> and an underrepresentation of <strong>classes 3 and 6</strong>.</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/classes_repartitions.jpg" alt="Classes repartition" />
+  <p>Repartition of every classes among datasets</p>
+</div>
+
+<p>Here’s the code for loading and preliminary exploring the data:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+ 
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+ 
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">import</span> <span class="nn">keras</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Conv2D</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Dropout</span><span class="p">,</span> <span class="n">BatchNormalization</span><span class="p">,</span> <span class="n">MaxPool2D</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">keras.utils</span> <span class="kn">import</span> <span class="n">to_categorical</span>
+ 
+<span class="c1"># SVM part
+</span> 
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_classification</span>
+<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+ 
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">ConfusionMatrixDisplay</span>
+ 
+<span class="s">"""# Mount drive"""</span>
+ 
+<span class="kn">from</span> <span class="nn">google.colab</span> <span class="kn">import</span> <span class="n">drive</span>
+<span class="n">drive</span><span class="p">.</span><span class="n">mount</span><span class="p">(</span><span class="s">'/content/drive'</span><span class="p">)</span>
+ 
+<span class="s">"""# Load data"""</span>
+ 
+<span class="n">working_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/"</span>
+ 
+<span class="n">human_sequences</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/human.txt"</span>
+<span class="n">dog_sequences</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/dog.txt"</span>
+<span class="n">chimpanze_sequences</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/chimpanzee.txt"</span>
+ 
+<span class="n">df_human</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">human_sequences</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">)</span>
+<span class="n">df_dog</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">dog_sequences</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">)</span>
+<span class="n">df_chimpanze</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">chimpanze_sequences</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">)</span>
+ 
+ 
+<span class="s">"""# Exploratory Data Analysis"""</span>
+ 
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">].</span><span class="n">value_counts</span><span class="p">(</span><span class="n">sort</span> <span class="o">=</span> <span class="bp">False</span><span class="p">).</span><span class="n">sort_index</span><span class="p">()</span> <span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"Proportion of sequences classes in human"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">"Class"</span><span class="p">,</span>
+           <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+          <span class="n">loc</span><span class="o">=</span><span class="s">"lower right"</span><span class="p">,)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">labels_dog</span> <span class="o">=</span> <span class="n">df_dog</span><span class="p">[</span><span class="s">"class"</span><span class="p">].</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">df_dog</span><span class="p">[</span><span class="s">"class"</span><span class="p">].</span><span class="n">value_counts</span><span class="p">(</span><span class="n">sort</span> <span class="o">=</span> <span class="bp">False</span><span class="p">).</span><span class="n">sort_index</span><span class="p">()</span> <span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"Proportion of sequences classes in dog"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">"Class"</span><span class="p">,</span>
+           <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+          <span class="n">loc</span><span class="o">=</span><span class="s">"lower right"</span><span class="p">,)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">labels_chimpanze</span> <span class="o">=</span> <span class="n">df_chimpanze</span><span class="p">[</span><span class="s">"class"</span><span class="p">].</span><span class="n">unique</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">pie</span><span class="p">(</span><span class="n">df_chimpanze</span><span class="p">[</span><span class="s">"class"</span><span class="p">].</span><span class="n">value_counts</span><span class="p">(</span><span class="n">sort</span> <span class="o">=</span> <span class="bp">False</span><span class="p">).</span><span class="n">sort_index</span><span class="p">()</span> <span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">'%1.1f%%'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"Proportion of sequences classes in chimpanze"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">"Class"</span><span class="p">,</span>
+           <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+          <span class="n">loc</span><span class="o">=</span><span class="s">"lower right"</span><span class="p">,)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">"EDA.png"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="the-chaos-theory">The Chaos Theory</h3>
+
+<p>Chaos theory, a field extensively studied in physics for many years, is closely linked to the creation of <strong>fractals</strong> (<a href="https://fr.wikipedia.org/wiki/Fractale">Wikipedia: Fractal</a>).</p>
+
+<p>In our case, we’ll create <strong>square matrix representations (graphics)</strong> of the sequences. These fractal-like representations are also intimately connected to the <strong>k-mer composition</strong> of our sequences. Let’s explore this in more detail.</p>
+
+<p>To do this, we’ll define a square where each corner corresponds to one of the four fantastic nucleotides that enrich our field: <strong>A, T, C, and G</strong>. The center of the square will be our origin, (0, 0). Thus, we’ll place the four aforementioned nucleotides at the coordinates: <strong><em>A (-1, 1), G (1, 1), T (1, -1), and finally C (-1, -1)</em></strong>.</p>
+
+<p>The idea is to move within this square as we traverse the sequence. But how? It’s quite simple. Starting from the center of the square, we’ll move to the midpoint of the segment connecting our origin <strong><em>O(0, 0)</em></strong> to the first nucleotide of the sequence. Let’s take an example where <strong>T</strong> is the first nucleotide. We would then move to the midpoint between (0, 0) and (1, -1), which is (0.5, -0.5). Let’s call this point <strong>Q</strong>. Next, we head in the direction of the following nucleotide. If it’s a <strong>G</strong>, we’ll follow the segment connecting Q (0.5, -0.5) to G (1, 1) to reach the midpoint of that segment, which is point <strong><em>R (0.75, 0.25)</em></strong>. The next nucleotide is an <strong>A</strong>. We then traverse the segment RA towards A (-1, 1) to the midpoint <strong><em>S (-0.125, 0.625)</em></strong>, and so on…</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/CGR_path.jpg" alt="CGR path" />
+  <p>Chaos theory traveling path</p>
+</div>
+
+<p>This process places a set of points (one for each nucleotide in the sequence) within the initial square. The resulting representation will then reflect the <strong>abundance of all k-mers</strong> (for a predefined <em>k</em>).</p>
+
+<p>Since numerical representations of spaces are discrete rather than continuous, we need to define our numerical space—in other words, the size of the output matrix. To do this, we must define the <strong>size <em>k</em> of the oligomers</strong> we’ll consider. The output matrix (or space) will then have a cardinality (or area) of \(4^k\) elements, forming a square with a side length of \(\sqrt{4^k}\).</p>
+
+<p>The traversal method we just discussed allows us to <strong>locate k-mers within this matrix</strong>. Indeed, if we retrace the path, we first move towards the bottom-right quadrant of the square for ‘T’, then into the top-right quadrant of that previous quadrant for ‘G’, then into the top-left quadrant of <em>that</em> quadrant, and so on. With each nucleotide traversed, the current quadrant is re-divided into four, while preserving the orientations relative to the nucleotide vertices.</p>
+
+<p>We’ll observe that all sequences, and by extension, all k-mers starting with ‘TG’, will be located in the top-right quadrant of the bottom-right quadrant. Following this successive division into four quadrants, it becomes possible to place all k-mers within the predefined space (or matrix elements, i.e., pixels of the image).</p>
+
+<p>For a space representative of 2-mers and 3-mers, we would have the following divisions:</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/CGR.jpg" alt="CGR split" />
+  <p>k-mers splitting inside CGR matrix</p>
+</div>
+
+<p>Alright, but what values should we assign to these quadrants or matrix elements? Well, now that the spaces dedicated to the k-mers are defined, we will assign to the corresponding elements in the matrix the <strong>probability of these k-mers appearing</strong> within the sequence. For more information on k-mers and calculating occurrence probabilities, you can refer to this link: <a href="https://fr.wikipedia.org/wiki/K-m%C3%A8re">Wikipedia: K-mer</a>.</p>
+
+<hr />
+
+<p>Thus, for a 3-mer representation, we would obtain an <strong>8x8 dimension matrix</strong> whose elements would have a value between 0 and 1. For our tutorial, we’ll use <strong>5-mers</strong> with a <strong>32x32 representation</strong>.</p>
+
+<p>To learn more about chaos theory representations, you can find information <a href="https://pubmed.ncbi.nlm.nih.gov/2336393/">here</a>.</p>
+
+<p>The code required to produce such representations is as follows:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Sanitize data
+### Human
+## Delete sequences that contains N
+</span><span class="n">nb_sequences_to_drop</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">rows_indexes_to_drop</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="s">'sequence'</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="s">'N'</span> <span class="ow">in</span> <span class="n">seq</span> <span class="p">:</span>
+      <span class="n">nb_sequences_to_drop</span> <span class="o">+=</span><span class="mi">1</span>
+      <span class="c1"># display(df.loc[df['sequence'] == seq])
+</span>      <span class="n">rows_indexes_to_drop</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Number of sequence to be dropped : </span><span class="si">{</span><span class="n">nb_sequences_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Rows to be dropped : </span><span class="si">{</span><span class="n">rows_indexes_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of the data before dropping sequences containing Ns : </span><span class="si">{</span><span class="n">df_human</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">df_human</span><span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="n">rows_indexes_to_drop</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of the data after dropping sequences containing Ns : </span><span class="si">{</span><span class="n">df_human</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+ 
+<span class="c1">### Dog
+</span> 
+<span class="n">nb_sequences_to_drop</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">rows_indexes_to_drop</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_dog</span><span class="p">[</span><span class="s">'sequence'</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="s">'N'</span> <span class="ow">in</span> <span class="n">seq</span> <span class="p">:</span>
+      <span class="n">nb_sequences_to_drop</span> <span class="o">+=</span><span class="mi">1</span>
+      <span class="n">rows_indexes_to_drop</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Number of sequence to be dropped : </span><span class="si">{</span><span class="n">nb_sequences_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Rows to be dropped : </span><span class="si">{</span><span class="n">rows_indexes_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of the data before dropping sequences containing Ns : </span><span class="si">{</span><span class="n">df_dog</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">df_dog</span> <span class="o">=</span> <span class="n">df_dog</span><span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="n">rows_indexes_to_drop</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+ 
+<span class="c1">### Chimpanze
+</span> 
+<span class="n">nb_sequences_to_drop</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">rows_indexes_to_drop</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">seq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df_chimpanze</span><span class="p">[</span><span class="s">'sequence'</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="s">'N'</span> <span class="ow">in</span> <span class="n">seq</span> <span class="p">:</span>
+      <span class="n">nb_sequences_to_drop</span> <span class="o">+=</span><span class="mi">1</span>
+      <span class="n">rows_indexes_to_drop</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Number of sequence to be dropped : </span><span class="si">{</span><span class="n">nb_sequences_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Rows to be dropped : </span><span class="si">{</span><span class="n">rows_indexes_to_drop</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of the data before dropping sequences containing Ns : </span><span class="si">{</span><span class="n">df_human</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="n">df_chimpanze</span><span class="p">.</span><span class="n">drop</span><span class="p">(</span><span class="n">rows_indexes_to_drop</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+ 
+<span class="c1">## CGR transformation
+</span> 
+<span class="k">def</span> <span class="nf">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+  <span class="s">"""
+  sequence : Sequence to encode as CGR
+  k = k-mers size
+  """</span>
+ 
+  <span class="n">kmer_count</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+      <span class="n">kmer_count</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">sequence</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">])]</span> <span class="o">+=</span><span class="mi">1</span>
+  <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kmer_count</span><span class="p">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="k">if</span> <span class="s">"N"</span> <span class="ow">in</span> <span class="n">key</span> <span class="p">:</span>
+          <span class="k">del</span> <span class="n">kmer_count</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+  <span class="n">probabilities</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+  <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kmer_count</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">probabilities</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">array_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="o">**</span><span class="n">k</span><span class="p">))</span>
+  <span class="n">chaos</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">array_size</span><span class="p">):</span>
+      <span class="n">chaos</span><span class="p">.</span><span class="n">append</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">array_size</span><span class="p">)</span>
+  <span class="n">maxx</span> <span class="o">=</span> <span class="n">array_size</span>
+  <span class="n">maxy</span> <span class="o">=</span> <span class="n">array_size</span>
+  <span class="n">posx</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">posy</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">probabilities</span><span class="p">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">key</span> <span class="p">:</span>
+          <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="s">"T"</span><span class="p">:</span>
+              <span class="n">posx</span> <span class="o">+=</span> <span class="n">maxx</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="s">"C"</span><span class="p">:</span>
+              <span class="n">posy</span> <span class="o">+=</span> <span class="n">maxy</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="k">elif</span> <span class="n">char</span> <span class="o">==</span> <span class="s">"G"</span><span class="p">:</span>
+              <span class="n">posx</span> <span class="o">+=</span> <span class="n">maxx</span> <span class="o">/</span> <span class="mi">2</span>
+              <span class="n">posy</span> <span class="o">+=</span> <span class="n">maxy</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="n">maxx</span> <span class="o">=</span> <span class="n">maxx</span> <span class="o">/</span> <span class="mi">2</span>
+          <span class="n">maxy</span> <span class="o">/=</span> <span class="mi">2</span>
+      <span class="n">chaos</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">posy</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">posx</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+      <span class="n">maxx</span> <span class="o">=</span> <span class="n">array_size</span>
+      <span class="n">maxy</span> <span class="o">=</span> <span class="n">array_size</span>
+      <span class="n">posx</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="n">posy</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="k">return</span> <span class="n">tf</span><span class="p">.</span><span class="n">constant</span><span class="p">(</span><span class="n">chaos</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Here’s what our sequences look like (no, no, it’s not a TV with bad reception).</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/CGR_representation-1.jpg" alt="CGR representations" />
+  <p>CGR representation for all the 6 classes</p>
+</div>
+
+<p>Here’s the code needed to produce these images:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Plot data
+# Randomly selected one example per class
+</span><span class="n">random_idx_class_0</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="n">random_idx_class_1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="n">random_idx_class_2</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="n">random_idx_class_3</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="n">random_idx_class_4</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="n">random_idx_class_5</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">choice</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">].</span><span class="n">index</span><span class="p">)</span>
+<span class="c1"># Plot some data
+</span><span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">231</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 0"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">232</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_1</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 1"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">233</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_2</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 2"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">234</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_3</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 3"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">235</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_4</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 4"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">236</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">sequence</span> <span class="o">=</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">][</span><span class="n">random_idx_class_5</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s">"gray"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">"CGR of class 5"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">wspace</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>It appears that DNA sequence representations are characteristic of species, sequence types, and more. So, let’s see how to use these representations for our classification goal.</p>
+
+<p>To do this, we’ll use a small network with <strong>two convolutional blocks</strong>, followed by a <strong>dense layer</strong> and a second <strong>dense classification layer</strong>.</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/base_model-1.jpg" alt="Basic CNN" />
+  <p>Basic convolution model</p>
+</div>
+
+<p>To train our network, we need to prepare the data so it can be fed into the network. We also need to divide the initial dataset into three sets: <strong>training</strong>, <strong>test</strong>, and <strong>validation</strong>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Learning part
+</span> 
+<span class="c1">### Generate data
+</span> 
+<span class="n">encoded_list</span> <span class="o">=</span> <span class="p">[]</span>
+ 
+<span class="k">for</span> <span class="n">seq</span> <span class="ow">in</span> <span class="n">df_human</span><span class="p">[</span><span class="s">"sequence"</span><span class="p">]:</span>
+  <span class="n">encoded_list</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgr_encoding</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+ 
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span>  <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">encoded_list</span><span class="p">),</span> <span class="n">to_categorical</span><span class="p">(</span><span class="n">df_human</span><span class="p">[</span><span class="s">"class"</span><span class="p">])</span>
+ 
+<span class="c1">### Data spliting
+</span> 
+<span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4020</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+ 
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">stratify</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span> <span class="c1"># Split data into train and test with respect of class proportions
+</span> 
+<span class="n">X_test</span><span class="p">,</span> <span class="n">X_validation</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">y_validation</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span> <span class="n">stratify</span> <span class="o">=</span> <span class="n">y_test</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="c1"># Split data into test and validation with respect of class proportions
+</span></code></pre></div></div>
+
+<h2 id="network-parametrization">Network parametrization</h2>
+
+<p>As mentioned previously, we’ll be using a small <strong>convolutional network</strong>. Unlike the network used last time, this one will be based on <strong>2D convolutional blocks</strong>, though the operation is similar. For a quick refresher on convolution, you can check out this article: <a href="https://medium.com/@CharlesCrouspeyre/comment-les-r%C3%A9seaux-de-neurones-%C3%A0-convolution-fonctionnement-b288519dbcf8">How Convolutional Neural Networks Work</a>.</p>
+
+<p>Our network will thus comprise two convolutional blocks (each consisting of a convolutional layer followed by a pooling layer, which is then followed by a dropout layer). These will be succeeded by a first dense layer that flattens the filters previously obtained by convolution, and then a dense layer with <strong>7 neurons</strong> for classification.</p>
+
+<p>Unlike last time, the classification layer will not use the sigmoid function for activation, but rather the <strong>softmax function</strong> to output a probability of belonging to a given class, rather than a “yes/no” type response.</p>
+
+<p>Regarding optimization parameters, we’ll use an <strong>ADAM gradient descent</strong> (for adjusting network weights) with a <strong>learning rate of 0.001</strong>. The loss function will be <strong>“categorical cross entropy”</strong> to account for errors in a multi-class classification context.</p>
+
+<p>The code required to build and train the network is as follows:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
+ 
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="s">"valid"</span><span class="p">,</span> <span class="n">input_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Conv_1"</span><span class="p">))</span> <span class="c1"># Input shape : Batch_size, width, height, channels
+</span><span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Dropout_1"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPool2D</span><span class="p">(</span><span class="n">pool_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s">'valid'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"MaxPool_1"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv2D</span><span class="p">(</span><span class="n">filters</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="n">kernel_size</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="s">'relu'</span><span class="p">,</span> <span class="n">padding</span> <span class="o">=</span> <span class="s">"valid"</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Conv_2"</span><span class="p">))</span> <span class="c1"># Input shape : Batch_size, width, height, channels
+</span><span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Dropout_2"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Flatten</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">"Flatten"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="s">'softmax'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Output"</span><span class="p">))</span>
+ 
+<span class="n">model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+ 
+<span class="c1"># Compile model
+</span><span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">'categorical_crossentropy'</span><span class="p">,</span>
+              <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">optimizers</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">'accuracy'</span><span class="p">])</span>
+ 
+<span class="c1"># Define early stopping to avoid overfitting
+</span> 
+<span class="n">early_stop</span> <span class="o">=</span> <span class="n">keras</span><span class="p">.</span><span class="n">callbacks</span><span class="p">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">monitor</span> <span class="o">=</span> <span class="s">'val_accuracy'</span><span class="p">,</span> <span class="n">min_delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                                           <span class="n">restore_best_weights</span><span class="o">=</span><span class="bp">True</span> <span class="p">)</span>
+ 
+<span class="c1"># Learning from data
+</span><span class="n">history</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span> <span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span><span class="n">epochs</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="first-results">First results</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Plot results
+</span> 
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"loss"</span><span class="p">],</span> <span class="s">'g'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_loss"</span><span class="p">],</span> <span class="s">'b'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">],</span> <span class="s">'r'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_accuracy"</span><span class="p">],</span> <span class="s">'orange'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">"base_modelpng"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+ 
+<span class="c1">### Save model
+</span> 
+<span class="n">working_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/"</span>
+<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_folder</span><span class="p">)</span>
+ 
+<span class="c1">### Model evaluation
+</span> 
+<span class="n">loss</span><span class="p">,</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_validation</span><span class="p">,</span> <span class="n">y_validation</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Basic model, accuracy : {:5.2f}%"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">acc</span><span class="p">))</span>
+
+<span class="c1">## Plot results
+</span> 
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"loss"</span><span class="p">],</span> <span class="s">'g'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_loss"</span><span class="p">],</span> <span class="s">'b'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">],</span> <span class="s">'r'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_accuracy"</span><span class="p">],</span> <span class="s">'orange'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">"base_modelpng"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+ 
+<span class="c1">### Save model
+</span> 
+<span class="n">working_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/"</span>
+<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_folder</span><span class="p">)</span>
+ 
+<span class="c1">### Model evaluation
+</span> 
+<span class="n">loss</span><span class="p">,</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_validation</span><span class="p">,</span> <span class="n">y_validation</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"Basic model, accuracy : {:5.2f}%"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">acc</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/base_model.jpg" alt="Basic CNN" />
+  <p>Base model training results</p>
+</div>
+
+<p>Our training is complete, what can we conclude?</p>
+
+<p>The overall quality of the training is quite satisfactory. We’re reaching a plateau in accuracy, achieving <strong>0.9 after 200 epochs</strong> (learning phases) during training. Validation accuracy is lower but acceptable. Our network seems to have learned quite well. Evaluating the model with the validation dataset gives us an overall performance of <strong>74%</strong>, which is relatively good, but could we do better? Let’s see if <strong>transfer learning</strong> could help us.</p>
+
+<hr />
+
+<h3 id="transfer-learning">Transfer Learning</h3>
+
+<p>Transfer learning involves using a previously acquired learning to address our current problem. However, we might be the first to pose this specific sequence classification question, especially considering our encoding based on chaos theory.</p>
+
+<p>In practice, transfer learning is often implemented to address time and/or performance constraints. It involves reusing models similar to ours that have already been trained and deliver satisfactory results. You might ask how to find a model strictly identical to mine? Well, it’s not necessary for the model to be strictly identical. The input dimensions of the network simply need to be compatible with our data, or we can adapt our data to the pre-trained network.</p>
+
+<p>This brings up the question of how the problem our network solves compares to the one the pre-trained network solves. To answer these questions, let’s dive directly into our example.</p>
+
+<p>We’re going to use a convolutional network already trained on the <strong>MNIST dataset</strong> and adapt it to our needs. MNIST? You’ve probably come across it before; it’s that famous dataset containing images of handwritten digits, well-known in all deep learning tutorials. In principle, these images are of size <strong>28x28x1</strong>. I’ve taken the liberty of adapting this network to accept our fractal representations of sequences, which have dimensions of <strong>32x32x1</strong>. The network we’ll be using is an adaptation of the <strong>LeNet5 network</strong> proposed by Yann LeCun (more information available).</p>
+
+<p>However, a major difference arises. The classification layer of this network has <strong>10 neurons</strong> to account for an image of a digit belonging to a class between 0 and 9. Don’t panic, we’ll adapt this to our needs.</p>
+
+<p>Let’s first outline what we’re going to do. First, we’ll reload the already trained model. (For more information on the model and its design, you can refer to this notebook: <a href="https://github.com/bioinfo-fr/data_ia/blob/main/article_ia_2/LeNet5.ipynb">LeNet5 Notebook</a>).</p>
+
+<p>We want to keep all the layers of the network, and also benefit from the weights already pre-established by the previous training. However, the network isn’t ready for immediate use with our problem. We’ll need to “fine-tune” this model to leverage the descriptors (filters) established during training on the MNIST database, by only training (adjusting the weights of) a subset of our network’s layers. In our example, LeNet being a rather small model, we’ll only keep the filters from the first layer. This means we’ll need to “freeze” the weights (coefficients of the convolutional filters) of the first layer and allow the network to adjust only the other weights.</p>
+
+<p>Furthermore, we mentioned that LeNet5 allows for classification in a 10-class context. We’ll therefore <strong>remove the last layer</strong> of the network, whose role is to perform this classification, and replace it with a <strong>dense classification layer with 7 classes</strong> adapted to our problem, which will then be trained. We’ll keep the same optimization parameters as our first network: <strong>ADAM with a learning rate of 0.001</strong>, and a <strong>“categorical cross entropy” loss function</strong>.</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/DNA-LeNet.jpg" alt="LeNet5 fine-tuning" />
+  <p>Scheme of LeNet5 fine-tuning process</p>
+</div>
+
+<p>The code required to perform these operations is as follows:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Load LeNet5
+</span> 
+<span class="n">lenet_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/LeNet/"</span>
+ 
+<span class="n">lenet_model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="n">lenet_folder</span><span class="p">)</span>
+ 
+<span class="c1">### Check LeNet model
+</span> 
+<span class="n">lenet_model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+ 
+<span class="c1">### Freeze bottom layers for transfer learning
+</span> 
+<span class="c1"># Freeze the first layers
+</span><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lenet_model</span><span class="p">.</span><span class="n">layers</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="p">:</span>
+    <span class="n">layer</span><span class="p">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="bp">False</span>
+ 
+<span class="c1">### Pop last dense layer and replace it for relevent goal
+</span> 
+<span class="c1"># Remove last layer
+</span><span class="n">lenet_model</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+ 
+<span class="c1"># Replace it with a more appropriate
+</span><span class="n">lenet_model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">units</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">activation</span> <span class="o">=</span> <span class="s">'softmax'</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">"Output"</span><span class="p">))</span>
+ 
+<span class="c1">### Check modified model
+</span> 
+<span class="n">lenet_model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+ 
+<span class="c1">### Compile model and train
+</span> 
+<span class="n">lenet_model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">'categorical_crossentropy'</span><span class="p">,</span>
+              <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">optimizers</span><span class="p">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
+              <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s">'accuracy'</span><span class="p">])</span>
+ 
+<span class="c1"># Define early stopping to avoid overfitting
+</span><span class="n">early_stop</span> <span class="o">=</span> <span class="n">keras</span><span class="p">.</span><span class="n">callbacks</span><span class="p">.</span><span class="n">EarlyStopping</span><span class="p">(</span><span class="n">monitor</span> <span class="o">=</span> <span class="s">'val_accuracy'</span><span class="p">,</span> <span class="n">min_delta</span> <span class="o">=</span> <span class="mf">0.0005</span><span class="p">,</span> <span class="n">patience</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+                                           <span class="n">restore_best_weights</span><span class="o">=</span><span class="bp">True</span> <span class="p">)</span>
+ 
+<span class="n">history_lenet</span> <span class="o">=</span> <span class="n">lenet_model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span> <span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">),</span>
+                        <span class="n">epochs</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+ 
+<span class="n">transfer_learning_directory</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/transfert_learning/"</span>
+ 
+ 
+<span class="n">lenet_model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">transfer_learning_directory</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="lenet-network-analysis">LeNet network analysis</h3>
+
+<p>Let’s look at our results:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""# Plot final results"""</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"loss"</span><span class="p">],</span> <span class="s">'g'</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s">'dotted'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training - LeNet'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_lenet</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history_lenet</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"loss"</span><span class="p">],</span> <span class="s">'g'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training - LeNet'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_loss"</span><span class="p">],</span> <span class="s">'b'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_lenet</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history_lenet</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_loss"</span><span class="p">],</span> <span class="s">'b'</span> <span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s">'dotted'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation  - LeNet'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Loss'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">],</span> <span class="s">'r'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_lenet</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history_lenet</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"accuracy"</span><span class="p">],</span> <span class="s">'r'</span><span class="p">,</span><span class="n">linestyle</span> <span class="o">=</span> <span class="s">'dotted'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Training - LeNet'</span><span class="p">)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_accuracy"</span><span class="p">],</span> <span class="s">'orange'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_lenet</span><span class="p">.</span><span class="n">epoch</span><span class="p">,</span> <span class="n">history_lenet</span><span class="p">.</span><span class="n">history</span><span class="p">[</span><span class="s">"val_accuracy"</span><span class="p">],</span> <span class="s">'orange'</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s">'dotted'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">'Validation - LeNet'</span><span class="p">)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">title</span><span class="p">(</span><span class="s">'Training accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">'Epochs'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">'Accuracy'</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">transfer_learning_directory</span> <span class="o">+</span> <span class="s">"dna_lenet_model.png"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+ 
+<span class="s">"""### Evaluate model"""</span>
+ 
+<span class="n">loss</span><span class="p">,</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">lenet_model</span><span class="p">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">X_validation</span><span class="p">,</span> <span class="n">y_validation</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"DNA LeNet model, accuracy : {:5.2f}%"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">acc</span><span class="p">))</span>
+</code></pre></div></div>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/dna_lenet_model.jpg" alt="LeNet5 results" />
+  <p>Results of LeNet5 fine-tuning</p>
+</div>
+
+<p>Here, we note two differences from the previous model. The first is that the accuracy at the end of our 200 epochs is slightly higher when using our DNA-LeNet. The validation accuracy is similar. However, the loss function value towards the end of training seems to behave erratically for this same network.</p>
+
+<p>Furthermore, we observe a small plateau at the beginning of the training for both our models. However, the plateau in the case of our DNA-LeNet is shorter; the network starts learning more quickly but learns more slowly than our first network version.</p>
+
+<p>Evaluating this new model with the validation dataset, we achieve an overall performance of <strong>72%</strong>. It seems that changing models has helped us only a little.</p>
+
+<p>Perhaps this is attributable to our classification layer struggling to deduce the correct class from all the features provided by the convolutional layers? Let’s see if we can classify our sequences differently than via this layer.</p>
+
+<hr />
+
+<h3 id="coupling-deep-learning-and-machine-learning">Coupling Deep Learning and Machine Learning</h3>
+
+<p>Unlike traditional machine learning, deep learning offers the advantage of partially freeing us from the need to extract features from our data. Indeed, in the context of a convolutional network, these features are learned. They are the convolutional filters whose coefficients are adjusted throughout the training.</p>
+
+<p>Could we then keep only these features and provide them to a more conventional classification algorithm? That’s what we’re about to explore.</p>
+
+<p>We’ll use <strong>SVM (Support Vector Machine)</strong>. This is a binary classification algorithm whose general principle is quite simple. It involves placing our data in a high-dimensional vector space to establish the equation of a hyperplane, which will represent the boundary best separating the different classes associated with the various points in this space. In our case, this means separating the representations of different sequence classes by maximizing the margin between these representations.</p>
+
+<p>Since it’s a separating hyperplane, we can only separate two classes at a time. Nevertheless, SVMs offer a strategy called <strong>“one vs one”</strong> that allows for building a multi-class classification system. Class separation will therefore occur pairwise in our space, aiming first to separate class 0 from class 1, then class 0 from class 2, then class 0 from class 3, and so on. We will then train as many binary classifiers as there are combinations of classes.</p>
+
+<p>Once these classifiers are trained, the classification step will proceed as follows: A representation will be placed in the classification space. A class will be attributed according to each of the calculated hyperplanes. For a given representation, we will thus have a set of plausible classes. The predicted class will then be determined by majority vote. In other words, if class 0 is predicted 9 times, class 1 is predicted 3 times, and class 5 is predicted 5 times, then class 0 will be assigned to our representation.</p>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/CNN_SVM.jpg" alt="LeNet5 results" />
+  <p>Coupling Between a CNN and an SVM</p>
+</div>
+
+<p>Enough theory, let’s get practical!</p>
+
+<p>First, we need to transform our initial convolutional network into a <strong>feature extractor</strong>. To do this, we’ll <strong>remove the classification layer</strong>. The network’s output will then be the output of the “Flatten” layer, resulting in a <strong>2304-dimensional vector per sequence</strong>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## Change classification layer for SVM
+</span> 
+<span class="c1">### Adapt intial CNN for SVM classification
+</span> 
+<span class="c1"># Chop off head of CNN
+</span> 
+<span class="n">modified_model</span> <span class="o">=</span> <span class="n">model</span>
+<span class="n">modified_model</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="n">modified_model</span><span class="p">.</span><span class="n">summary</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The next step involves <strong>re-encoding the output data</strong>. We’ll feed all of our CGR (Chaos Game Representation) images into our network to obtain the corresponding vectors for the training, test, and validation sets:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">### Prepare data for svm
+# Go back on labels from one hot encoding
+</span><span class="n">X_train_svm</span>  <span class="o">=</span> <span class="n">modified_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+<span class="n">y_train_svm</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+ 
+<span class="n">X_test_svm</span> <span class="o">=</span> <span class="n">modified_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_test_svm</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+ 
+<span class="n">X_validation_svm</span> <span class="o">=</span> <span class="n">modified_model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_validation</span><span class="p">)</span>
+<span class="n">y_validation_svm</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_validation</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+ 
+<span class="c1">### Checking dimensions
+</span> 
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of x_train_svm : </span><span class="si">{</span><span class="n">X_train_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of y_train_svm : </span><span class="si">{</span><span class="n">y_train_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+ 
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of x_test_svm : </span><span class="si">{</span><span class="n">X_test_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of y_test_svm : </span><span class="si">{</span><span class="n">y_test_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+ 
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of x_validation_svm : </span><span class="si">{</span><span class="n">X_validation_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Shape of y_validation_svm : </span><span class="si">{</span><span class="n">y_validation_svm</span><span class="p">.</span><span class="n">shape</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Finally, we’ll define our classifier, an <strong>SVM in “one vs one” mode</strong>, and train this model:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">### Instanciate SVM classifier and train it
+</span> 
+<span class="n">SVM_classifier</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">decision_function_shape</span> <span class="o">=</span> <span class="s">'ovo'</span><span class="p">,</span> <span class="n">class_weight</span> <span class="o">=</span> <span class="s">"balanced"</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="mf">125.0</span><span class="p">)</span>
+<span class="n">SVM_classifier</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_svm</span><span class="p">,</span> <span class="n">y_train_svm</span><span class="p">,)</span>
+</code></pre></div></div>
+
+<p>Now that our model is trained using the features extracted by the modified initial convolutional network, let’s examine the results.</p>
+
+<h3 id="cnn---svm-coupling-results-analysis">CNN - SVM coupling results analysis</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">### Evaluate classification
+</span> 
+<span class="c1"># Make predictions on test set
+</span> 
+<span class="n">y_pred_svm</span> <span class="o">=</span> <span class="n">SVM_classifier</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test_svm</span><span class="p">)</span>
+ 
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test_svm</span><span class="p">,</span> <span class="n">y_pred_svm</span><span class="p">)</span>
+ 
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Acuracy using CNN coupled to SVM : </span><span class="si">{</span><span class="n">accuracy</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+ 
+<span class="c1">## Confusion matrix
+</span> 
+<span class="n">class_names</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+ 
+<span class="c1"># Plot non-normalized confusion matrix
+</span><span class="n">titles_options</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s">"Confusion matrix, without normalization"</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">"Normalized confusion matrix"</span><span class="p">,</span> <span class="s">"true"</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">normalize</span> <span class="ow">in</span> <span class="n">titles_options</span> <span class="p">:</span>
+    <span class="n">disp</span> <span class="o">=</span> <span class="n">ConfusionMatrixDisplay</span><span class="p">.</span><span class="n">from_estimator</span><span class="p">(</span>
+        <span class="n">SVM_classifier</span><span class="p">,</span>
+        <span class="n">X_test_svm</span><span class="p">,</span>
+        <span class="n">y_test_svm</span><span class="p">,</span>
+        <span class="n">display_labels</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="p">.</span><span class="n">cm</span><span class="p">.</span><span class="n">Blues</span><span class="p">,</span>
+        <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">disp</span><span class="p">.</span><span class="n">ax_</span><span class="p">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+ 
+    <span class="k">print</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">disp</span><span class="p">.</span><span class="n">confusion_matrix</span><span class="p">)</span>
+ 
+<span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">"svm_confusion_matrix.png"</span><span class="p">)</span>
+<span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<div style="text-align: center;">
+  <img src="/images/post_images/article_2/svm_confusion_matrix.jpg" alt="LeNet5 results" />
+  <p>Confusion Matrix after CNN-SVM Coupled Prediction</p>
+</div>
+
+<p>As with any machine learning procedure, it was necessary to parameterize the model’s hyperparameters. Here, I only focused on the <strong>“C” coefficient</strong>, which is the margin coefficient for an SVM-type classifier.</p>
+
+<p>The results here are very interesting. We obtain an accuracy of <strong>83.8%</strong> compared to approximately 70-75% with our two previous approaches.</p>
+
+<p>Observing the confusion matrix, we can see that classes <strong>0, 1, and 6 are well separated</strong> from the others, while classes <strong>2 and 3 seem more difficult to distinguish</strong>. Nevertheless, our classification system coupling CNN and SVM appears effective.</p>
+
+<hr />
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>Throughout this tutorial, we’ve walked through the standard chain of a (mini) analysis based on machine learning.</p>
+
+<p>The first step involved <strong>data import</strong>, an <strong>exploratory data analysis</strong>, and their <strong>encoding using chaos game theory</strong>. In a second step, we trained a small <strong>convolutional network</strong> with our sequences transformed into images.</p>
+
+<p>In a third step, we attempted to improve the performance of this model by using another model of the same kind, trained on digit images, to address the concept of <strong>transfer learning</strong>.</p>
+
+<p>It seems that the classification steps of these two previous networks struggled to fulfill their role. This might potentially be linked to the training, for which 200 epochs may not have been sufficient. Indeed, we can observe from the learning curves that the plateau isn’t fully reached.</p>
+
+<p>Finally, in a last step, we sought to improve our classifier by using our initial convolutional network as a <strong>feature extractor</strong> and performing the classification with a <strong>Support Vector Machine</strong>, thus addressing the <strong>coupling of deep learning and machine learning</strong>.</p>
+
+<p>All data, scripts, notebooks, and model saves are available in <a href="https://github.com/bioinfo-fr/data_ia/tree/main/article_ia_2">this git repository</a>.</p>
+
+<p><strong>N.B.:</strong> If you reproduce this tutorial, your results may differ from those presented here due to the stochastic nature of the learning procedures and the initial dataset splitting.</p>]]></content><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><category term="Bioinformatics" /><category term="Artificial Intelligence" /><category term="Tutorial" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Bioinformatics and AI: A First Step</title><link href="http://localhost:4000/posts/2023/06/blog-post-1/" rel="alternate" type="text/html" title="Bioinformatics and AI: A First Step" /><published>2023-06-14T00:00:00+00:00</published><updated>2023-06-14T00:00:00+00:00</updated><id>http://localhost:4000/posts/2023/06/blog-post-1</id><content type="html" xml:base="http://localhost:4000/posts/2023/06/blog-post-1/"><![CDATA[<h1 id="bioinformatics-and-ai-a-first-step">Bioinformatics and AI: A First Step</h1>
+
+<p>The corresponding notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/github/bioinfo-fr/data_ia/blob/main/DNA_CNN_promoters.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" />
 </a></p>
 
