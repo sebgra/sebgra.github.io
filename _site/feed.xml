@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-30T10:03:10+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: CNNs for bioinformatics</title><link href="http://localhost:4000/posts/2024/02/blog-post-2/" rel="alternate" type="text/html" title="Bioinformatics and AI: CNNs for bioinformatics" /><published>2024-02-16T00:00:00+00:00</published><updated>2024-02-16T00:00:00+00:00</updated><id>http://localhost:4000/posts/2024/02/blog-post-2</id><content type="html" xml:base="http://localhost:4000/posts/2024/02/blog-post-2/"><![CDATA[<!-- TODO: Set google collab notebook -->
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-05-30T14:45:32+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: CNNs for bioinformatics</title><link href="http://localhost:4000/posts/2024/02/blog-post-2/" rel="alternate" type="text/html" title="Bioinformatics and AI: CNNs for bioinformatics" /><published>2024-02-16T00:00:00+00:00</published><updated>2024-02-16T00:00:00+00:00</updated><id>http://localhost:4000/posts/2024/02/blog-post-2</id><content type="html" xml:base="http://localhost:4000/posts/2024/02/blog-post-2/"><![CDATA[<!-- TODO: Set google collab notebook -->
 
 <p>The corresponding notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/github/bioinfo-fr/data_ia/blob/main/DNA_CNN_promoters.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" />
@@ -92,8 +92,8 @@
 <span class="n">df_chimpanze</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">chimpanze_sequences</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">)</span>
  
  
-<span class="s">"""# Exploratory Data Analysis"""</span>
- 
+<span class="c1"># Exploratory Data Analysis
+</span> 
 <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
 <span class="n">plt</span><span class="p">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="n">plt</span><span class="p">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
@@ -386,7 +386,7 @@
 <span class="c1">### Save model
 </span> 
 <span class="n">working_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/"</span>
-<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_folder</span><span class="p">)</span>
+<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">'base_modle.h5'</span><span class="p">)</span>
  
 <span class="c1">### Model evaluation
 </span> 
@@ -413,11 +413,7 @@
 <span class="n">plt</span><span class="p">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="p">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">working_folder</span> <span class="o">+</span> <span class="s">"base_modelpng"</span><span class="p">)</span>
 <span class="n">plt</span><span class="p">.</span><span class="n">show</span><span class="p">()</span>
- 
-<span class="c1">### Save model
-</span> 
-<span class="n">working_folder</span> <span class="o">=</span> <span class="s">"/content/drive/MyDrive/Sequences/"</span>
-<span class="n">model</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">working_folder</span><span class="p">)</span>
+
  
 <span class="c1">### Model evaluation
 </span> 
