@@ -8,11 +8,11 @@ redirect_from:
 ---
 
   
-\
+<!-- \
 &nbsp;
 \
 &nbsp;
-   
+    -->
 
 <!-- I'm a Bioinformatics & AI specialist driven by the power of computational methods to decode complex biology, with a particular focus on personalized medicine and drug discovery. My work at the Pasteur Institute led to Hicberg (genomics tool, publication coming soon!). 
 
@@ -20,8 +20,6 @@ Currently, I'm applying and seeking to understand AI models for omics data to ad
 
 
 If you wish to discuss potential opportunities, collaborations, or chat about Bioinformatics, Machine Learning, and related topics, feel free to contact me via LinkedIn. -->
-
----
 
 ## 📖 About Me
 
@@ -121,6 +119,3 @@ If you wish to discuss potential opportunities, collaborations, or chat about Bi
       <a href="#"><img alt="Stack Overflow" src="https://img.shields.io/badge/-Stack%20Overflow-FE7A16?logo=stack-overflow&logoColor=white"></a>
       <a href="#"><img alt="Sphinx" src="https://img.shields.io/badge/Sphinx-000?logo=sphinx&logoColor=fff)"></a>
       <a href="#"><img alt="Visual Studio Code" src="https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?logo=visual-studio-code&logoColor=white"></a>
-</p>
-
----
