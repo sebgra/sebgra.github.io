@@ -23,9 +23,9 @@ repository               : "academicpages/academicpages.github.io"
 author:
   # Biographic information
   avatar           : "Logo.png"
-  name             : "Sébastien Gradit"
+  name             : "Sébastien Gradit, PhD"
   pronouns         : # example: "she/her"  
-  bio              : "PhD bioinformatician leveraging AI and machine learning for genomic and multi-omics data insights to advance therapeutics and diagnostics through explainable AI."
+  bio              : "Bioinformatician leveraging AI to advance diagnostics and therapeutics using genomic and multi-omics data."
   location         : "Paris"
   employer         : "Institut Pasteur"
   uri              : # URL

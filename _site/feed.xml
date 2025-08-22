@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-08-22T13:02:10+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: CNNs for bioinformatics</title><link href="http://localhost:4000/posts/2024/02/blog-post-2/" rel="alternate" type="text/html" title="Bioinformatics and AI: CNNs for bioinformatics" /><published>2024-02-16T00:00:00+00:00</published><updated>2024-02-16T00:00:00+00:00</updated><id>http://localhost:4000/posts/2024/02/blog-post-2</id><content type="html" xml:base="http://localhost:4000/posts/2024/02/blog-post-2/"><![CDATA[<!-- TODO: Set google collab notebook -->
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-08-22T14:35:13+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Home</title><subtitle>personal description</subtitle><author><name>Sébastien Gradit, PhD</name><email>sebastiengradit@gmail.com</email></author><entry><title type="html">Bioinformatics and AI: CNNs for bioinformatics</title><link href="http://localhost:4000/posts/2024/02/blog-post-2/" rel="alternate" type="text/html" title="Bioinformatics and AI: CNNs for bioinformatics" /><published>2024-02-16T00:00:00+00:00</published><updated>2024-02-16T00:00:00+00:00</updated><id>http://localhost:4000/posts/2024/02/blog-post-2</id><content type="html" xml:base="http://localhost:4000/posts/2024/02/blog-post-2/"><![CDATA[<!-- TODO: Set google collab notebook -->
 
 <p>The corresponding notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/drive/132oYff_-gaWyvQ2oY2O92FVNz3pdbOMf#scrollTo=LimEkMH6vdsM">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" />
@@ -884,7 +884,7 @@
 
 <p>All data, scripts, notebooks, and model saves are available in <a href="https://github.com/bioinfo-fr/data_ia/tree/main/article_ia_2">this git repository</a>.</p>
 
-<p><strong>N.B.:</strong> If you reproduce this tutorial, your results may differ from those presented here due to the stochastic nature of the learning procedures and the initial dataset splitting.</p>]]></content><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><category term="Bioinformatics" /><category term="Artificial Intelligence" /><category term="Tutorial" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Bioinformatics and AI: A First Step</title><link href="http://localhost:4000/posts/2023/06/blog-post-1/" rel="alternate" type="text/html" title="Bioinformatics and AI: A First Step" /><published>2023-06-14T00:00:00+00:00</published><updated>2023-06-14T00:00:00+00:00</updated><id>http://localhost:4000/posts/2023/06/blog-post-1</id><content type="html" xml:base="http://localhost:4000/posts/2023/06/blog-post-1/"><![CDATA[<h1 id="bioinformatics-and-ai-a-first-step">Bioinformatics and AI: A First Step</h1>
+<p><strong>N.B.:</strong> If you reproduce this tutorial, your results may differ from those presented here due to the stochastic nature of the learning procedures and the initial dataset splitting.</p>]]></content><author><name>Sébastien Gradit, PhD</name><email>sebastiengradit@gmail.com</email></author><category term="Bioinformatics" /><category term="Artificial Intelligence" /><category term="Tutorial" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Bioinformatics and AI: A First Step</title><link href="http://localhost:4000/posts/2023/06/blog-post-1/" rel="alternate" type="text/html" title="Bioinformatics and AI: A First Step" /><published>2023-06-14T00:00:00+00:00</published><updated>2023-06-14T00:00:00+00:00</updated><id>http://localhost:4000/posts/2023/06/blog-post-1</id><content type="html" xml:base="http://localhost:4000/posts/2023/06/blog-post-1/"><![CDATA[<!-- TODO: Set google collab notebook -->
 
 <p>The corresponding notebook about the following article can directly be launched through google collab <a target="_blank" href="https://colab.research.google.com/github/bioinfo-fr/data_ia/blob/main/DNA_CNN_promoters.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" />
@@ -904,13 +904,15 @@
 
 <!-- DNA matrix genetics - TheDigitalArtist -->
 
+<!-- <div style="text-align: justify"> -->
+<!-- <p style="text-align:justify;"> -->
 <p>Artificial Intelligence (AI), Machine Learning, Deep Learning – these terms feel both foreign and familiar at the same time… How do you find your way through this jungle of technical terms?</p>
 
 <p>Let’s start by defining what <strong>AI</strong> is. A basis for science fiction for some, a source of concern for others, we’ll approach AI from a technical perspective. Inspired by biology and cognitive sciences, and built on mathematical foundations, artificial intelligence is defined as a <strong>set of algorithms designed to replicate decisions made by a human being to accomplish a specific task.</strong></p>
 
-<p>“Human” implies perceptual learning, memory organization, and critical reasoning. Indeed, any AI algorithm will require human knowledge, both in the preparation and labeling of data, and in its interpretation.</p>
-
-<hr />
+<p>“Human” implies perceptual learning, memory organization, and critical reasoning. Indeed, any AI algorithm will require human knowledge, both in the preparation and labeling of data, and in its interpretation.
+<!-- </p> -->
+—</p>
 
 <h2 id="ai-but-for-what-purpose">AI, but for what purpose?</h2>
 
@@ -1329,4 +1331,4 @@
 
 <h2 id="to-go-further-with-convolutional-networks">To Go Further with Convolutional Networks</h2>
 
-<p>Here are some resources on CNNs: <a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53">https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53</a></p>]]></content><author><name>Sébastien Gradit</name><email>sebastiengradit@gmail.com</email></author><category term="Bioinformatics" /><category term="Artificial Intelligence" /><category term="Tutorial" /><summary type="html"><![CDATA[Bioinformatics and AI: A First Step]]></summary></entry></feed>
+<p>Here are some resources on CNNs: <a href="https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53">https://towardsdatascience.com/a-comprehensive-guide-to-convolutional-neural-networks-the-eli5-way-3bd2b1164a53</a></p>]]></content><author><name>Sébastien Gradit, PhD</name><email>sebastiengradit@gmail.com</email></author><category term="Bioinformatics" /><category term="Artificial Intelligence" /><category term="Tutorial" /><summary type="html"><![CDATA[]]></summary></entry></feed>

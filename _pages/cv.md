@@ -25,7 +25,7 @@ redirect_from:
     data="{{ base_path }}/files/cv.pdf#toolbar=0" 
     type="application/pdf" 
     width="100%" 
-    height="600px"
+    height="250px"
     style="display: block; margin: 0 auto; border: 1px solid #ddd;"
   >
     <p>Your browser doesn't support embedded PDFs. Please use the download link above.</p>
